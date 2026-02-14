@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <title>Fiber Color Chart</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
 
 <style>
 body {
@@ -39,7 +41,6 @@ button {
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
-  position: relative;
 }
 
 .tube-header {
@@ -47,6 +48,18 @@ button {
   cursor: pointer;
   font-weight: bold;
   position: relative;
+}
+
+.rings {
+  margin-top: 5px;
+}
+
+.ring {
+  display: inline-block;
+  width: 6px;
+  height: 20px;
+  background: black;
+  margin-right: 3px;
 }
 
 .tube-content {
@@ -66,22 +79,6 @@ button {
   font-weight: bold;
   color: black;
 }
-
-.rings {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  right: 10px;
-  top: 5px;
-}
-
-.ring {
-  width: 20px;
-  height: 3px;
-  margin: 2px 0;
-  border-radius: 2px;
-  background: black; /* overridden in JS for black tubes */
-}
 </style>
 </head>
 
@@ -98,7 +95,6 @@ button {
 <div id="tubeContainer"></div>
 
 <script>
-window.onload = function() {
 
 const colorPattern = [
   {name:"Blue", color:"#0066ff"},
@@ -122,6 +118,7 @@ const totalTubes = totalFibers / fibersPerTube;
 const container = document.getElementById("tubeContainer");
 
 for (let t = 1; t <= totalTubes; t++) {
+
   const tubeDiv = document.createElement("div");
   tubeDiv.className = "tube";
   tubeDiv.id = "tube-" + t;
@@ -146,13 +143,6 @@ for (let t = 1; t <= totalTubes; t++) {
     for (let r = 0; r < ringCount; r++) {
       const ring = document.createElement("div");
       ring.className = "ring";
-
-      if (tubeColor.name === "Black") {
-        ring.style.background = "#ffd700"; // yellow rings for black tube
-      } else {
-        ring.style.background = "black";
-      }
-
       ringContainer.appendChild(ring);
     }
 
@@ -188,7 +178,7 @@ for (let t = 1; t <= totalTubes; t++) {
   container.appendChild(tubeDiv);
 }
 
-window.searchFiber = function() {
+function searchFiber() {
   const fiberNum = parseInt(document.getElementById("fiberSearch").value);
 
   if (fiberNum < 1 || fiberNum > 1728 || isNaN(fiberNum)) {
@@ -197,6 +187,7 @@ window.searchFiber = function() {
   }
 
   const tubeNumber = Math.ceil(fiberNum / 12);
+
   const tube = document.getElementById("tube-" + tubeNumber);
   const content = tube.querySelector(".tube-content");
 
@@ -206,9 +197,12 @@ window.searchFiber = function() {
     behavior: "smooth",
     block: "center"
   });
-};
+}
 
-} // end window.onload
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+
 </script>
 
 </body>
