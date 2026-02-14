@@ -136,18 +136,27 @@ for (let t = 1; t <= totalTubes; t++) {
 
   header.innerHTML = "Tube " + t + " - " + tubeColor.name;
 
-  if (ringCount > 0) {
-    const ringContainer = document.createElement("div");
-    ringContainer.className = "rings";
+ if (ringCount > 0) {
+  const ringContainer = document.createElement("div");
+  ringContainer.className = "rings";
 
-    for (let r = 0; r < ringCount; r++) {
-      const ring = document.createElement("div");
-      ring.className = "ring";
-      ringContainer.appendChild(ring);
+  for (let r = 0; r < ringCount; r++) {
+    const ring = document.createElement("div");
+    ring.className = "ring";
+
+    // If tube color is black, make ring yellow
+    if (tubeColor.name === "Black") {
+      ring.style.background = "#ffd700"; // yellow
+    } else {
+      ring.style.background = "black";
     }
 
-    header.appendChild(ringContainer);
+    ringContainer.appendChild(ring);
   }
+
+  header.appendChild(ringContainer);
+}
+
 
   header.onclick = function() {
     const content = this.nextElementSibling;
