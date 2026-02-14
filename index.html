@@ -41,6 +41,7 @@ button {
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
+  position: relative;
 }
 
 .tube-header {
@@ -48,18 +49,6 @@ button {
   cursor: pointer;
   font-weight: bold;
   position: relative;
-}
-
-.rings {
-  margin-top: 5px;
-}
-
-.ring {
-  display: inline-block;
-  width: 6px;
-  height: 20px;
-  background: black;
-  margin-right: 3px;
 }
 
 .tube-content {
@@ -79,6 +68,22 @@ button {
   font-weight: bold;
   color: black;
 }
+
+.rings {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  right: 10px;
+  top: 5px;
+}
+
+.ring {
+  width: 20px;
+  height: 3px;
+  margin: 2px 0;
+  border-radius: 2px;
+  background: black; /* overridden in JS for black tubes */
+}
 </style>
 </head>
 
@@ -91,128 +96,3 @@ button {
   <input type="number" id="fiberSearch" min="1" max="1728">
   <button onclick="searchFiber()">Search</button>
 </div>
-
-<div id="tubeContainer"></div>
-
-<script>
-
-const colorPattern = [
-  {name:"Blue", color:"#0066ff"},
-  {name:"Orange", color:"#ff8000"},
-  {name:"Green", color:"#00b300"},
-  {name:"Brown", color:"#8b4513"},
-  {name:"Slate", color:"#708090"},
-  {name:"White", color:"#ffffff"},
-  {name:"Red", color:"#ff0000"},
-  {name:"Black", color:"#000000"},
-  {name:"Yellow", color:"#ffd700"},
-  {name:"Violet", color:"#8a2be2"},
-  {name:"Rose", color:"#ff66cc"},
-  {name:"Aqua", color:"#00ffff"}
-];
-
-const totalFibers = 1728;
-const fibersPerTube = 12;
-const totalTubes = totalFibers / fibersPerTube;
-
-const container = document.getElementById("tubeContainer");
-
-for (let t = 1; t <= totalTubes; t++) {
-
-  const tubeDiv = document.createElement("div");
-  tubeDiv.className = "tube";
-  tubeDiv.id = "tube-" + t;
-
-  const header = document.createElement("div");
-  header.className = "tube-header";
-
-  const baseColorIndex = (t - 1) % 12;
-  const tubeColor = colorPattern[baseColorIndex];
-
-  header.style.background = tubeColor.color;
-  header.style.color = (tubeColor.name === "Black" || tubeColor.name === "Brown" || tubeColor.name === "Violet") ? "white" : "black";
-
-  const ringCount = Math.floor((t - 1) / 12);
-
-  header.innerHTML = "Tube " + t + " - " + tubeColor.name;
-
- if (ringCount > 0) {
-  const ringContainer = document.createElement("div");
-  ringContainer.className = "rings";
-
-  for (let r = 0; r < ringCount; r++) {
-    const ring = document.createElement("div");
-    ring.className = "ring";
-
-    // If tube color is black, make ring yellow
-    if (tubeColor.name === "Black") {
-      ring.style.background = "#ffd700"; // yellow
-    } else {
-      ring.style.background = "black";
-    }
-
-    ringContainer.appendChild(ring);
-  }
-
-  header.appendChild(ringContainer);
-}
-
-
-  header.onclick = function() {
-    const content = this.nextElementSibling;
-    content.style.display = content.style.display === "block" ? "none" : "block";
-  };
-
-  const content = document.createElement("div");
-  content.className = "tube-content";
-
-  for (let f = 1; f <= fibersPerTube; f++) {
-    const fiberNumber = ((t - 1) * fibersPerTube) + f;
-    const colorIndex = (f - 1) % 12;
-    const fiberColor = colorPattern[colorIndex];
-
-    const fiberDiv = document.createElement("div");
-    fiberDiv.className = "fiber";
-    fiberDiv.style.background = fiberColor.color;
-    fiberDiv.style.color = (fiberColor.name === "Black" || fiberColor.name === "Brown" || fiberColor.name === "Violet") ? "white" : "black";
-
-    fiberDiv.id = "fiber-" + fiberNumber;
-    fiberDiv.innerHTML = fiberNumber + "<br>" + fiberColor.name;
-
-    content.appendChild(fiberDiv);
-  }
-
-  tubeDiv.appendChild(header);
-  tubeDiv.appendChild(content);
-  container.appendChild(tubeDiv);
-}
-
-function searchFiber() {
-  const fiberNum = parseInt(document.getElementById("fiberSearch").value);
-
-  if (fiberNum < 1 || fiberNum > 1728 || isNaN(fiberNum)) {
-    alert("Enter a number between 1 and 1728");
-    return;
-  }
-
-  const tubeNumber = Math.ceil(fiberNum / 12);
-
-  const tube = document.getElementById("tube-" + tubeNumber);
-  const content = tube.querySelector(".tube-content");
-
-  content.style.display = "block";
-
-  document.getElementById("fiber-" + fiberNum).scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
-}
-
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
-}
-
-</script>
-
-</body>
-</html>
