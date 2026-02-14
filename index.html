@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>1728 Fiber Tube Viewer</title>
+<title>Fiber Color Chart</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111111">
@@ -19,6 +19,24 @@ h1 {
   text-align: center;
 }
 
+.search-box {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 8px;
+  font-size: 16px;
+  width: 150px;
+  text-align: center;
+}
+
+button {
+  padding: 8px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .tube {
   margin-bottom: 10px;
   border-radius: 8px;
@@ -29,6 +47,19 @@ h1 {
   padding: 15px;
   cursor: pointer;
   font-weight: bold;
+  position: relative;
+}
+
+.rings {
+  margin-top: 5px;
+}
+
+.ring {
+  display: inline-block;
+  width: 6px;
+  height: 20px;
+  background: black;
+  margin-right: 3px;
 }
 
 .tube-content {
@@ -53,7 +84,13 @@ h1 {
 
 <body>
 
-<h1>1728 Fiber Tube Viewer</h1>
+<h1>Fiber Color Chart</h1>
+
+<div class="search-box">
+  <p>Search Fiber (1–1728)</p>
+  <input type="number" id="fiberSearch" min="1" max="1728">
+  <button onclick="searchFiber()">Search</button>
+</div>
 
 <div id="tubeContainer"></div>
 
@@ -84,22 +121,33 @@ for (let t = 1; t <= totalTubes; t++) {
 
   const tubeDiv = document.createElement("div");
   tubeDiv.className = "tube";
+  tubeDiv.id = "tube-" + t;
 
   const header = document.createElement("div");
   header.className = "tube-header";
 
-  const tubeColorIndex = (t - 1) % 12;
-  const tubeColor = colorPattern[tubeColorIndex];
+  const baseColorIndex = (t - 1) % 12;
+  const tubeColor = colorPattern[baseColorIndex];
 
   header.style.background = tubeColor.color;
+  header.style.color = (tubeColor.name === "Black" || tubeColor.name === "Brown" || tubeColor.name === "Violet") ? "white" : "black";
 
-  if (tubeColor.name === "Black" || tubeColor.name === "Brown" || tubeColor.name === "Violet") {
-    header.style.color = "white";
-  } else {
-    header.style.color = "black";
+  const ringCount = Math.floor((t - 1) / 12);
+
+  header.innerHTML = "Tube " + t + " - " + tubeColor.name;
+
+  if (ringCount > 0) {
+    const ringContainer = document.createElement("div");
+    ringContainer.className = "rings";
+
+    for (let r = 0; r < ringCount; r++) {
+      const ring = document.createElement("div");
+      ring.className = "ring";
+      ringContainer.appendChild(ring);
+    }
+
+    header.appendChild(ringContainer);
   }
-
-  header.innerText = "Tube " + t + " - " + tubeColor.name;
 
   header.onclick = function() {
     const content = this.nextElementSibling;
@@ -117,11 +165,9 @@ for (let t = 1; t <= totalTubes; t++) {
     const fiberDiv = document.createElement("div");
     fiberDiv.className = "fiber";
     fiberDiv.style.background = fiberColor.color;
+    fiberDiv.style.color = (fiberColor.name === "Black" || fiberColor.name === "Brown" || fiberColor.name === "Violet") ? "white" : "black";
 
-    if (fiberColor.name === "Black" || fiberColor.name === "Brown" || fiberColor.name === "Violet") {
-      fiberDiv.style.color = "white";
-    }
-
+    fiberDiv.id = "fiber-" + fiberNumber;
     fiberDiv.innerHTML = fiberNumber + "<br>" + fiberColor.name;
 
     content.appendChild(fiberDiv);
@@ -130,6 +176,27 @@ for (let t = 1; t <= totalTubes; t++) {
   tubeDiv.appendChild(header);
   tubeDiv.appendChild(content);
   container.appendChild(tubeDiv);
+}
+
+function searchFiber() {
+  const fiberNum = parseInt(document.getElementById("fiberSearch").value);
+
+  if (fiberNum < 1 || fiberNum > 1728 || isNaN(fiberNum)) {
+    alert("Enter a number between 1 and 1728");
+    return;
+  }
+
+  const tubeNumber = Math.ceil(fiberNum / 12);
+
+  const tube = document.getElementById("tube-" + tubeNumber);
+  const content = tube.querySelector(".tube-content");
+
+  content.style.display = "block";
+
+  document.getElementById("fiber-" + fiberNum).scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
 }
 
 if ('serviceWorker' in navigator) {
