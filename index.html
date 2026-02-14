@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Fiber Tube Viewer 1728</title>
+<title>1728 Fiber Tube Viewer</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111111">
@@ -20,7 +20,6 @@ h1 {
 }
 
 .tube {
-  background: #1e1e1e;
   margin-bottom: 10px;
   border-radius: 8px;
   overflow: hidden;
@@ -30,12 +29,12 @@ h1 {
   padding: 15px;
   cursor: pointer;
   font-weight: bold;
-  background: #222;
 }
 
 .tube-content {
   display: none;
   padding: 10px;
+  background: #1e1e1e;
 }
 
 .fiber {
@@ -60,7 +59,7 @@ h1 {
 
 <script>
 
-const fiberColors = [
+const colorPattern = [
   {name:"Blue", color:"#0066ff"},
   {name:"Orange", color:"#ff8000"},
   {name:"Green", color:"#00b300"},
@@ -88,7 +87,20 @@ for (let t = 1; t <= totalTubes; t++) {
 
   const header = document.createElement("div");
   header.className = "tube-header";
-  header.innerText = "Tube " + t;
+
+  const tubeColorIndex = (t - 1) % 12;
+  const tubeColor = colorPattern[tubeColorIndex];
+
+  header.style.background = tubeColor.color;
+
+  if (tubeColor.name === "Black" || tubeColor.name === "Brown" || tubeColor.name === "Violet") {
+    header.style.color = "white";
+  } else {
+    header.style.color = "black";
+  }
+
+  header.innerText = "Tube " + t + " - " + tubeColor.name;
+
   header.onclick = function() {
     const content = this.nextElementSibling;
     content.style.display = content.style.display === "block" ? "none" : "block";
@@ -100,16 +112,17 @@ for (let t = 1; t <= totalTubes; t++) {
   for (let f = 1; f <= fibersPerTube; f++) {
     const fiberNumber = ((t - 1) * fibersPerTube) + f;
     const colorIndex = (f - 1) % 12;
+    const fiberColor = colorPattern[colorIndex];
 
     const fiberDiv = document.createElement("div");
     fiberDiv.className = "fiber";
-    fiberDiv.style.background = fiberColors[colorIndex].color;
+    fiberDiv.style.background = fiberColor.color;
 
-    if (fiberColors[colorIndex].name === "Black") {
+    if (fiberColor.name === "Black" || fiberColor.name === "Brown" || fiberColor.name === "Violet") {
       fiberDiv.style.color = "white";
     }
 
-    fiberDiv.innerHTML = fiberNumber + "<br>" + fiberColors[colorIndex].name;
+    fiberDiv.innerHTML = fiberNumber + "<br>" + fiberColor.name;
 
     content.appendChild(fiberDiv);
   }
