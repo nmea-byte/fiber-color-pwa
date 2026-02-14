@@ -1,80 +1,128 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
-  <title>Fiber Color Code 1728</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#111111">
+<meta charset="UTF-8">
+<title>Fiber Tube Viewer 1728</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111111">
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 30px;
-    }
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #111;
+  color: white;
+  padding: 20px;
+}
 
-    input {
-      padding: 10px;
-      font-size: 18px;
-      width: 150px;
-      text-align: center;
-    }
+h1 {
+  text-align: center;
+}
 
-    button {
-      padding: 10px 20px;
-      font-size: 18px;
-      margin-left: 10px;
-      cursor: pointer;
-    }
+.tube {
+  background: #1e1e1e;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  overflow: hidden;
+}
 
-    .result {
-      margin-top: 30px;
-      font-size: 22px;
-    }
-  </style>
+.tube-header {
+  padding: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  background: #222;
+}
+
+.tube-content {
+  display: none;
+  padding: 10px;
+}
+
+.fiber {
+  display: inline-block;
+  width: 70px;
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+}
+</style>
 </head>
+
 <body>
 
-<h1>Fiber Color Code 1728</h1>
+<h1>1728 Fiber Tube Viewer</h1>
 
-<p>Enter Fiber Number (1–1728)</p>
-
-<input type="number" id="fiberInput" min="1" max="1728">
-<button onclick="calculateFiber()">Search</button>
-
-<div class="result" id="result"></div>
+<div id="tubeContainer"></div>
 
 <script>
-const colors = [
-  "Blue","Orange","Green","Brown","Slate","White",
-  "Red","Black","Yellow","Violet","Rose","Aqua"
+
+const fiberColors = [
+  {name:"Blue", color:"#0066ff"},
+  {name:"Orange", color:"#ff8000"},
+  {name:"Green", color:"#00b300"},
+  {name:"Brown", color:"#8b4513"},
+  {name:"Slate", color:"#708090"},
+  {name:"White", color:"#ffffff"},
+  {name:"Red", color:"#ff0000"},
+  {name:"Black", color:"#000000"},
+  {name:"Yellow", color:"#ffd700"},
+  {name:"Violet", color:"#8a2be2"},
+  {name:"Rose", color:"#ff66cc"},
+  {name:"Aqua", color:"#00ffff"}
 ];
 
-function calculateFiber() {
-  const fiberNumber = parseInt(document.getElementById("fiberInput").value);
+const totalFibers = 1728;
+const fibersPerTube = 12;
+const totalTubes = totalFibers / fibersPerTube;
 
-  if (fiberNumber < 1 || fiberNumber > 1728 || isNaN(fiberNumber)) {
-    document.getElementById("result").innerHTML = "Enter a number between 1 and 1728";
-    return;
+const container = document.getElementById("tubeContainer");
+
+for (let t = 1; t <= totalTubes; t++) {
+
+  const tubeDiv = document.createElement("div");
+  tubeDiv.className = "tube";
+
+  const header = document.createElement("div");
+  header.className = "tube-header";
+  header.innerText = "Tube " + t;
+  header.onclick = function() {
+    const content = this.nextElementSibling;
+    content.style.display = content.style.display === "block" ? "none" : "block";
+  };
+
+  const content = document.createElement("div");
+  content.className = "tube-content";
+
+  for (let f = 1; f <= fibersPerTube; f++) {
+    const fiberNumber = ((t - 1) * fibersPerTube) + f;
+    const colorIndex = (f - 1) % 12;
+
+    const fiberDiv = document.createElement("div");
+    fiberDiv.className = "fiber";
+    fiberDiv.style.background = fiberColors[colorIndex].color;
+
+    if (fiberColors[colorIndex].name === "Black") {
+      fiberDiv.style.color = "white";
+    }
+
+    fiberDiv.innerHTML = fiberNumber + "<br>" + fiberColors[colorIndex].name;
+
+    content.appendChild(fiberDiv);
   }
 
-  const tubeNumber = Math.ceil(fiberNumber / 12);
-  const position = ((fiberNumber - 1) % 12);
-  const color = colors[position];
-
-  document.getElementById("result").innerHTML =
-    "<p><strong>Fiber:</strong> " + fiberNumber + "</p>" +
-    "<p><strong>Tube:</strong> " + tubeNumber + "</p>" +
-    "<p><strong>Position in Tube:</strong> " + (position + 1) + "</p>" +
-    "<p><strong>Color:</strong> " + color + "</p>";
+  tubeDiv.appendChild(header);
+  tubeDiv.appendChild(content);
+  container.appendChild(tubeDiv);
 }
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('service-worker.js');
 }
+
 </script>
 
 </body>
