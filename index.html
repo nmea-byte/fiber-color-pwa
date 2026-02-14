@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Fiber Color Code 1728</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#111111">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 30px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 18px;
+      width: 150px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-left: 10px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 30px;
+      font-size: 22px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>Fiber Color Code 1728</h1>
+
+<p>Enter Fiber Number (1–1728)</p>
+
+<input type="number" id="fiberInput" min="1" max="1728">
+<button onclick="calculateFiber()">Search</button>
+
+<div class="result" id="result"></div>
+
+<script>
+const colors = [
+  "Blue","Orange","Green","Brown","Slate","White",
+  "Red","Black","Yellow","Violet","Rose","Aqua"
+];
+
+function calculateFiber() {
+  const fiberNumber = parseInt(document.getElementById("fiberInput").value);
+
+  if (fiberNumber < 1 || fiberNumber > 1728 || isNaN(fiberNumber)) {
+    document.getElementById("result").innerHTML = "Enter a number between 1 and 1728";
+    return;
+  }
+
+  const tubeNumber = Math.ceil(fiberNumber / 12);
+  const position = ((fiberNumber - 1) % 12);
+  const color = colors[position];
+
+  document.getElementById("result").innerHTML =
+    "<p><strong>Fiber:</strong> " + fiberNumber + "</p>" +
+    "<p><strong>Tube:</strong> " + tubeNumber + "</p>" +
+    "<p><strong>Position in Tube:</strong> " + (position + 1) + "</p>" +
+    "<p><strong>Color:</strong> " + color + "</p>";
+}
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
+</body>
+</html>
